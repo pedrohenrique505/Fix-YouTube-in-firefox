@@ -1,4 +1,4 @@
-// YouTube Customizer - Content Script
+// Fix Youtube - Content Script
 
 (function () {
     'use strict';
@@ -150,5 +150,5 @@
         expandQueue();
     }, 2000);
 
-    console.log('YouTube Customizer: Extensão carregada');
+    console.log('Fix Youtube: Extensão carregada');
 })();

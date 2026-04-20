@@ -1,4 +1,4 @@
-# YouTube Customizer - Firefox Extension
+# Fix Youtube - Firefox Extension
 
 A Firefox extension that blocks YouTube Shorts and forces the video grid to show 5 videos per row consistently.
 
@@ -113,7 +113,7 @@ observer.observe(document.body, {
 ## 📝 File Structure
 
 ```
-youtube-customizer/
+Fix-Youtube/
 ├── manifest.json      # Extension configuration
 ├── content.js         # Main Javascript logic
 ├── styles.css         # CSS styles and layout overrides

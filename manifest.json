@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "YouTube Customizer",
+  "name": "Fix Youtube",
   "version": "1.0",
   "description": "Bloqueia YouTube Shorts e expande a fila de vídeos para 5 itens",
   "permissions": [
