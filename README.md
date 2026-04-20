@@ -1,104 +1,102 @@
-# YouTube Customizer - Extensão Firefox
+# YouTube Customizer - Firefox Extension
 
-Uma extensão para Firefox que bloqueia os YouTube Shorts e expande a fila de vídeos recomendados para 5 vídeos.
+A Firefox extension that blocks YouTube Shorts and forces the video grid to show 5 videos per row consistently.
 
-## 🎯 Funcionalidades
+## 🎯 Features
 
-1. **Bloqueio de Shorts**: Remove completamente todos os Shorts do YouTube
-   - Bloqueia shorts na página inicial
-   - Bloqueia shorts nos resultados de busca
-   - Redireciona URLs de shorts (/shorts/) para vídeos normais (/watch)
-   - Remove os botões/chips de navegação para Shorts
+1. **Shorts Blocking**: Completely removes all Shorts from YouTube
+   - Blocks shorts on the home page
+   - Blocks shorts in search results
+   - Redirects shorts URLs (`/shorts/`) to the normal video player (`/watch`)
+   - Removes navigation chips and tabs for Shorts
 
-2. **Expansão da Fila**: Mostra 5 vídeos na fila ao invés de 3
-   - Expande a seção de vídeos recomendados
-   - Mantém todos os 5 vídeos sempre visíveis
+2. **Grid & Queue Expansion**: Always shows 5 videos
+   - Overrides YouTube's dynamic grid calculation
+   - Ensures 5 videos are always visible per row on the home page and subscriptions
+   - Expands the recommended videos queue on the watch page
 
-## 📦 Instalação
+## 📦 Installation
 
-### Método 1: Instalação Temporária (para testes)
+### Method 1: Temporary Installation (for testing)
 
-1. Abra o Firefox
-2. Digite `about:debugging` na barra de endereços
-3. Clique em "Este Firefox" (ou "This Firefox")
-4. Clique em "Carregar extensão temporária..." (ou "Load Temporary Add-on...")
-5. Navegue até a pasta da extensão e selecione o arquivo `manifest.json`
-6. A extensão será carregada (ficará ativa até fechar o Firefox)
+1. Open Firefox
+2. Type `about:debugging` in the address bar
+3. Click on "This Firefox"
+4. Click on "Load Temporary Add-on..."
+5. Navigate to the extension folder and select the `manifest.json` file
+6. The extension will be loaded and active until you close Firefox
 
-### Método 2: Instalação Permanente (empacotando)
+### Method 2: Permanent Installation (Packaging)
 
-1. Empacote a extensão em um arquivo .xpi:
-   ```bash
-   cd youtube-customizer
-   zip -r ../youtube-customizer.xpi *
-   ```
+1. Package the extension into a `.zip` or `.xpi` file:
+   - Select all files inside the folder (`manifest.json`, `content.js`, `styles.css`, etc.)
+   - Right-click and compress them into a ZIP archive. Make sure `manifest.json` is at the root of the ZIP, not inside a subfolder.
 
-2. No Firefox, vá em `about:addons`
-3. Clique no ícone de engrenagem ⚙️
-4. Selecione "Instalar extensão a partir de arquivo..."
-5. Escolha o arquivo `youtube-customizer.xpi`
+2. Go to `about:addons` in Firefox
+3. Click the gear icon ⚙️
+4. Select "Install Add-on From File..."
+5. Choose your packaged `.zip` or `.xpi` file
 
-**Nota**: Para instalação permanente de extensões não assinadas, você precisa:
-- Usar Firefox Developer Edition ou Firefox Nightly
-- Ou assinar a extensão no site de desenvolvedores da Mozilla
+**Note**: For permanent installation of unsigned extensions, you need Firefox Developer Edition or Firefox Nightly, or you must sign the extension on the Mozilla Developer Hub (Add-ons for Firefox).
 
-## 🔧 Como Funciona
+## 🔧 How it Works
 
-### Arquitetura da Extensão
+### Extension Architecture
 
-A extensão usa três componentes principais:
+The extension uses three main components:
 
-1. **manifest.json**: Define as permissões e metadados
-2. **content.js**: Script que roda nas páginas do YouTube
-3. **styles.css**: Regras CSS para esconder elementos
+1. **manifest.json**: Defines permissions and metadata
+2. **content.js**: Script that runs on YouTube pages to clean the DOM dynamically
+3. **styles.css**: CSS rules to hide elements and override the grid layout
 
-### Detalhes Técnicos
+### Technical Details
 
-#### Bloqueio de Shorts
+#### Shorts Blocking
 
-O script usa múltiplas estratégias:
+The script uses multiple strategies:
 
 ```javascript
-// 1. Detecta navegação para URLs de shorts
+// 1. Detects navigation to shorts URLs
 if (window.location.pathname.includes('/shorts/')) {
-    // Redireciona para formato normal
+    // Redirects to normal format
     window.location.href = `https://www.youtube.com/watch?v=${videoId}`;
 }
 
-// 2. Remove elementos do DOM usando seletores CSS
+// 2. Removes DOM elements using accurate CSS selectors
 const shortsSelectors = [
-    'ytd-reel-shelf-renderer',  // Shelf de shorts
-    'ytd-reel-item-renderer',   // Shorts individuais
-    'a[href*="/shorts/"]'       // Links para shorts
+    'ytd-reel-shelf-renderer',  // Classic Shorts shelf
+    'grid-shelf-view-model:has(ytm-shorts-lockup-view-model)', // Modern UI shelf
+    'a[href*="/shorts/"]'       // Shorts links
 ];
 
-// 3. Intercepta cliques em links de shorts
+// 3. Intercepts clicks on shorts links dynamically
 link.addEventListener('click', function(e) {
     e.preventDefault();
-    // Converte para vídeo normal
+    // Converts to normal video and redirects
 });
 ```
 
-#### Expansão da Fila
+#### Home Page Grid (5 Videos)
 
-O YouTube limita artificialmente quantos vídeos mostra. A extensão:
+YouTube artificially limits or changes how many videos it shows per row based on window size using Javascript. The extension overrides this entirely with Modern CSS Grid:
 
-```javascript
-// 1. Encontra o container da fila
-const queueContainer = document.querySelector('#related #items');
+```css
+/* 1. Sets the strict 5-column grid layout */
+#contents.ytd-rich-grid-renderer {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+}
 
-// 2. Force visibilidade dos primeiros 5 vídeos
-items.forEach((item, index) => {
-    if (index < 5) {
-        item.style.display = 'block';
-        item.style.visibility = 'visible';
-    }
-});
+/* 2. Disables YouTube's row wrappers so items flow smoothly */
+ytd-rich-grid-row,
+ytd-rich-grid-row > #contents {
+    display: contents !important;
+}
 ```
 
 #### MutationObserver
 
-Como o YouTube é uma Single Page Application (SPA), o conteúdo é carregado dinamicamente. Usamos um MutationObserver para detectar mudanças:
+Since YouTube is a Single Page Application (SPA), content is loaded dynamically as you scroll or click around. We use a MutationObserver to detect changes and re-apply filters:
 
 ```javascript
 const observer = new MutationObserver((mutations) => {
@@ -112,98 +110,26 @@ observer.observe(document.body, {
 });
 ```
 
-## 🛠️ Personalização
-
-### Modificar o número de vídeos na fila
-
-No arquivo `content.js`, encontre esta linha:
-
-```javascript
-if (index < 5) {  // Mude 5 para o número desejado
-```
-
-### Adicionar mais bloqueios
-
-No array `shortsSelectors`, adicione novos seletores CSS:
-
-```javascript
-const shortsSelectors = [
-    'ytd-reel-shelf-renderer',
-    'seu-novo-seletor-aqui'
-];
-```
-
-## 📚 Recursos para Aprender Mais
-
-### Livros Recomendados
-
-1. **"JavaScript: The Definitive Guide"** - David Flanagan
-   - Referência completa sobre JavaScript
-   - Cobre manipulação de DOM e eventos
-   - Essencial para entender o content script
-
-2. **"Web Extensions"** - Mozilla Developer Network (Online)
-   - Guia oficial da Mozilla sobre WebExtensions
-   - https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions
-
-3. **"Eloquent JavaScript"** - Marijn Haverbeke
-   - Excelente para entender JavaScript moderno
-   - Capítulos sobre DOM e eventos navegador
-   - Gratuito online: https://eloquentjavascript.net/
-
-### Documentação Oficial
-
-- **MDN Web Docs**: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons
-- **Chrome Extensions Docs** (compatível): https://developer.chrome.com/docs/extensions/
-
-### Conceitos Importantes para Estudar
-
-1. **DOM Manipulation**: Como JavaScript interage com HTML
-2. **MutationObserver API**: Observar mudanças no DOM
-3. **Event Delegation**: Capturar eventos eficientemente
-4. **CSS Selectors**: Identificar elementos precisamente
-5. **Content Security Policy**: Entender limitações de segurança
-
-## 🐛 Solução de Problemas
-
-### Shorts ainda aparecem
-
-1. Recarregue a página completamente (Ctrl+F5)
-2. Verifique se a extensão está ativa em `about:addons`
-3. Abra o console (F12) e procure por erros
-
-### Fila não mostra 5 vídeos
-
-- O YouTube pode não ter 5 vídeos para mostrar
-- Alguns vídeos podem estar carregando assincronamente
-- Aguarde alguns segundos após carregar a página
-
-### Extensão para de funcionar após fechar Firefox
-
-- Isso é normal para instalação temporária
-- Use o Método 2 de instalação para torná-la permanente
-
-## 📝 Estrutura de Arquivos
+## 📝 File Structure
 
 ```
 youtube-customizer/
-├── manifest.json      # Configuração da extensão
-├── content.js         # Script principal
-├── styles.css         # Estilos CSS
-├── icon.png           # Ícone da extensão
-└── README.md          # Este arquivo
+├── manifest.json      # Extension configuration
+├── content.js         # Main Javascript logic
+├── styles.css         # CSS styles and layout overrides
+└── README.md          # This file
 ```
 
-## 🔐 Permissões
+## 🔐 Permissions
 
-A extensão requer apenas:
-- Acesso ao domínio youtube.com (para modificar a página)
-- Nenhuma permissão de rede ou dados pessoais
+The extension requires only:
+- Access to the `youtube.com` domains (to modify the page layout)
+- No network or personal data tracking permissions are used. 
 
-## 📄 Licença
+## 📄 License
 
-Este código é livre para uso pessoal e educacional.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Nota**: Esta extensão modifica apenas a interface do YouTube localmente no seu navegador. Nenhum dado é enviado para servidores externos.
+**Note**: This extension only modifies the YouTube interface locally in your browser. No data is ever collected or sent to external servers.
