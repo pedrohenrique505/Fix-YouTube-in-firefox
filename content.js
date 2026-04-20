@@ -1,12 +1,12 @@
 // YouTube Customizer - Content Script
 
-(function() {
+(function () {
     'use strict';
 
     // ============================================
     // PARTE 1: BLOQUEAR SHORTS
     // ============================================
-    
+
     // Função para bloquear shorts
     function blockShorts() {
         // Redirecionar se estiver em uma URL de shorts
@@ -29,6 +29,12 @@
             'yt-chip-cloud-chip-renderer:has([title="Shorts"])',
             // Grid de shorts
             'ytd-grid-renderer:has(ytd-reel-item-renderer)',
+            // Novos seletores baseados no novo visual do YouTube
+            'grid-shelf-view-model:has(ytm-shorts-lockup-view-model)',
+            'grid-shelf-view-model:has(ytm-shorts-lockup-view-model-v2)',
+            'ytm-shorts-lockup-view-model',
+            'ytm-shorts-lockup-view-model-v2',
+            'yt-horizontal-list-renderer:has(ytm-shorts-lockup-view-model)',
             // Links para shorts
             'a[href*="/shorts/"]'
         ];
@@ -46,7 +52,7 @@
         // Bloquear links de shorts antes do clique
         document.querySelectorAll('a[href*="/shorts/"]').forEach(link => {
             if (!link.hasAttribute('data-shorts-blocked')) {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     const videoId = this.href.split('/shorts/')[1]?.split('?')[0];
@@ -62,15 +68,15 @@
     // ============================================
     // PARTE 2: EXPANDIR FILA DE VÍDEOS
     // ============================================
-    
+
     function expandQueue() {
         // Encontrar o container da fila (next/autoplay)
         const queueContainer = document.querySelector('#related #items, ytd-watch-next-secondary-results-renderer #items');
-        
+
         if (queueContainer) {
             // Forçar mais vídeos visíveis através de atributos
             const items = queueContainer.querySelectorAll('ytd-compact-video-renderer, ytd-video-renderer');
-            
+
             // Mostrar até 5 vídeos
             items.forEach((item, index) => {
                 if (index < 5) {
@@ -95,7 +101,7 @@
     // ============================================
     // OBSERVADOR DE MUDANÇAS NO DOM
     // ============================================
-    
+
     // Criar um MutationObserver para aplicar as regras quando o YouTube carregar conteúdo dinamicamente
     const observer = new MutationObserver((mutations) => {
         blockShorts();

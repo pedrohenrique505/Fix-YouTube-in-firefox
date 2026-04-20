@@ -3,26 +3,23 @@
   "name": "YouTube Customizer",
   "version": "1.0",
   "description": "Bloqueia YouTube Shorts e expande a fila de vídeos para 5 itens",
-  
   "permissions": [
     "https://www.youtube.com/*",
     "https://m.youtube.com/*"
   ],
-  
   "content_scripts": [
     {
       "matches": [
         "https://www.youtube.com/*",
         "https://m.youtube.com/*"
       ],
-      "js": ["content.js"],
-      "css": ["styles.css"],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
       "run_at": "document_start"
     }
-  ],
-  
-  "icons": {
-    "48": "icon.png",
-    "96": "icon.png"
-  }
+  ]
 }

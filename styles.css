@@ -12,7 +12,15 @@ ytd-rich-section-renderer:has([title*="Shorts"]),
 yt-chip-cloud-chip-renderer:has([title="Shorts"]),
 ytd-guide-entry-renderer:has([title="Shorts"]),
 a[href*="/shorts/"],
-[data-blocked-by-extension="true"] {
+[data-blocked-by-extension="true"],
+grid-shelf-view-model:has(ytm-shorts-lockup-view-model),
+grid-shelf-view-model:has(ytm-shorts-lockup-view-model-v2),
+ytm-shorts-lockup-view-model,
+ytm-shorts-lockup-view-model-v2,
+yt-horizontal-list-renderer:has(ytm-shorts-lockup-view-model),
+yt-horizontal-list-renderer:has(ytm-shorts-lockup-view-model-v2),
+ytd-rich-section-renderer:has(ytm-shorts-lockup-view-model),
+ytd-rich-section-renderer:has(ytm-shorts-lockup-view-model-v2) {
     display: none !important;
     visibility: hidden !important;
     height: 0 !important;
@@ -57,15 +65,33 @@ ytd-watch-next-secondary-results-renderer {
 }
 
 /* ============================================
-   MELHORIAS DE LAYOUT
+   MELHORIAS DE LAYOUT E FORÇAR 5 VÍDEOS
    ============================================ */
 
-/* Evitar que o layout quebre ao remover shorts */
-ytd-rich-grid-renderer {
+/* Configuração do grid principal da home e inscrições para 5 colunas */
+#contents.ytd-rich-grid-renderer {
     display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    grid-gap: 20px !important;
 }
 
-/* Manter espaçamento consistente */
+/* Remover o agrupamento em linhas feito pelo YouTube para usar nosso grid livremente */
+ytd-rich-grid-row,
+ytd-rich-grid-row>#contents {
+    display: contents !important;
+}
+
+/* Ajustar os itens de vídeo para ocupar o espaço de sua célula e não transbordar */
 ytd-rich-item-renderer {
-    margin-bottom: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    margin-bottom: 24px !important;
+}
+
+/* Fazer com que seções completas ocupem toda a largura e não fiquem presas em uma coluna */
+ytd-rich-section-renderer,
+ytd-continuation-item-renderer,
+#masthead-ad {
+    grid-column: 1 / -1 !important;
 }
