@@ -21,5 +21,9 @@
       ],
       "run_at": "document_start"
     }
-  ]
+  ],
+  "icons": {
+    "48": "logo-48.png",
+    "128": "logo-128.png"
+  }
 }
