@@ -1,0 +1,11 @@
+# Pacotes da extensão
+*.zip
+*.xpi
+
+# Arquivos do Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Pastas de IDEs (opcional)
+.vscode/
+.idea/

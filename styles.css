@@ -1,0 +1,71 @@
+/* YouTube Customizer - Styles */
+
+/* ============================================
+   BLOQUEAR SHORTS
+   ============================================ */
+
+/* Esconder todos os elementos relacionados a shorts */
+ytd-reel-shelf-renderer,
+ytd-reel-item-renderer,
+ytd-rich-shelf-renderer[is-shorts],
+ytd-rich-section-renderer:has([title*="Shorts"]),
+yt-chip-cloud-chip-renderer:has([title="Shorts"]),
+ytd-guide-entry-renderer:has([title="Shorts"]),
+a[href*="/shorts/"],
+[data-blocked-by-extension="true"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Esconder seções de shorts */
+ytd-rich-section-renderer:has(#shelf-renderer.ytd-rich-section-renderer) {
+    display: none !important;
+}
+
+/* ============================================
+   EXPANDIR FILA DE VÍDEOS
+   ============================================ */
+
+/* Aumentar o número de vídeos visíveis na fila */
+#related #items,
+ytd-watch-next-secondary-results-renderer #items {
+    max-height: none !important;
+}
+
+/* Forçar visibilidade dos primeiros 5 vídeos */
+#related ytd-compact-video-renderer:nth-child(-n+5),
+#related ytd-video-renderer:nth-child(-n+5) {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Remover altura máxima do container de autoplay */
+ytd-compact-autoplay-renderer {
+    max-height: none !important;
+}
+
+/* Ajustar o container secundário */
+ytd-watch-next-secondary-results-renderer {
+    max-height: none !important;
+}
+
+/* Garantir que os itens não sejam cortados */
+#secondary-inner {
+    max-height: none !important;
+}
+
+/* ============================================
+   MELHORIAS DE LAYOUT
+   ============================================ */
+
+/* Evitar que o layout quebre ao remover shorts */
+ytd-rich-grid-renderer {
+    display: grid !important;
+}
+
+/* Manter espaçamento consistente */
+ytd-rich-item-renderer {
+    margin-bottom: 16px !important;
+}
