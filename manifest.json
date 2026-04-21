@@ -2,6 +2,14 @@
   "manifest_version": 2,
   "name": "Fix Youtube",
   "version": "1.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fix-youtube-addon@mozilla.org",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
   "description": "Bloqueia YouTube Shorts e expande a fila de vídeos para 5 itens",
   "permissions": [
     "https://www.youtube.com/*",
